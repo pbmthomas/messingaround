@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Cataract Surgery Tick Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        input, select, button {
+            font-size: 1em;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #003d80;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #0056b3;
+            color: white;
+            font-size: 1.2em;
+        }
+        td input {
+            width: 20px;
+            height: 20px;
+        }
+        td {
+            background-color: #ffffff;
+            font-size: 1em;
+        }
+        tr:nth-child(even) td {
+            background-color: #f2f2f2;
+        }
+        tr:hover td {
+            background-color: #e6f7ff;
+        }
+        .accessible-text {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Post-Cataract Surgery Drop Schedule</h1>
+    <div class="accessible-text">
+        <p><strong>Instructions:</strong> Select the start date and drop regimen below. A tick chart will be generated to help you keep track of your medications. Checkboxes are designed for easy visibility and interaction.</p>
+    </div>
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" />
+
+    <label for="regimen">Pred Forte Regimen:</label>
+    <select id="regimen">
+        <option value="6">6x a day</option>
+        <option value="4">4x a day</option>
+    </select>
+
+    <button onclick="generateChart()">Generate Chart</button>
+
+    <table id="chartTable">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Date</th>
+                <th colspan="6">Pred Forte (Red)</th>
+                <th colspan="4">Chloramphenicol (Green)</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th>8am</th>
+                <th>10am</th>
+                <th>12pm</th>
+                <th>3pm</th>
+                <th>6pm</th>
+                <th>8pm</th>
+                <th>8am</th>
+                <th>12pm</th>
+                <th>4pm</th>
+                <th>8pm</th>
+            </tr>
+        </thead>
+        <tbody id="chartBody">
+        </tbody>
+    </table>
+
+    <script>
+        function generateChart() {
+            const startDateInput = document.getElementById("startDate").value;
+            const regimen = parseInt(document.getElementById("regimen").value);
+            const chartBody = document.getElementById("chartBody");
+
+            if (!startDateInput) {
+                alert("Please select a start date.");
+                return;
+            }
+
+            const startDate = new Date(startDateInput);
+            chartBody.innerHTML = "";
+
+            for (let day = 1; day <= 7; day++) {
+                const row = document.createElement("tr");
+
+                const dayCell = document.createElement("td");
+                dayCell.textContent = `Day ${day}`;
+                row.appendChild(dayCell);
+
+                const dateCell = document.createElement("td");
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + day - 1);
+                dateCell.textContent = currentDate.toISOString().split("T")[0];
+                row.appendChild(dateCell);
+
+                // Pred Forte columns
+                const predTimes = ["8am", "10am", "12pm", "3pm", "6pm", "8pm"];
+                predTimes.forEach((time, index) => {
+                    const cell = document.createElement("td");
+                    if (index < regimen) {
+                        cell.innerHTML = "<input type='checkbox'>";
+                    }
+                    row.appendChild(cell);
+                });
+
+                // Chloramphenicol columns
+                ["8am", "12pm", "4pm", "8pm"].forEach(() => {
+                    const cell = document.createElement("td");
+                    cell.innerHTML = "<input type='checkbox'>";
+                    row.appendChild(cell);
+                });
+
+                chartBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
+
